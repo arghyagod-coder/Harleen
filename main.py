@@ -111,7 +111,44 @@ async def on_message(message):
             await message.channel.send(shorten(queries[0], queries[1], queries[2]))
         else:
             await message.channel.send("Invalid query! The command syntax is `binod.shorten <url_to_shorten> <alias_type> <alias>`.")
+    elif "%help" in message.content:
+        await message.channel.send('''
+        
+**Harleen**
+I am Harleen, people call me a bot, but professionally I'm a mastermind
+My powers of multi tasking, well its immatchable
 
+> *Whenever I try moving on one path,* 
+> *Others are auto attracted towards me*
+
+**Commands:**
+%help- Display this command 
+%meme - Get your stomach punky with a meme 
+%reddit <subreddit> - Ah yes get posts from your favorite subreddit, right in discord
+%surprise <user> - Give a good surprise to your best friend/enemy
+%joke - Wanna listen to a panky joke?
+%short <url> <alias type> <alias> - Get a shortened custom url free of cost
+%quote - Wanna refresh your brain with some motivating quotes?
+%chat <question> - You can chat with me with basic questions, cmon don't be so tough
+
+**Browsing Section:**
+%google <argument> - Can't undertsand soemthing? Google it!
+%wiki <argument> - Oh how much I like to read wikipedia articles
+%yt <argument> - Search your fav video on Youtube can you?
+
+**Reactions**:
+%yes 
+%no 
+%yay 
+%lol
+%damnson
+
+Have Fun ;)
+
+Happy Biting!
+
+https://c.tenor.com/52Z-ocm88pcAAAAC/harley-quinn-eyebrows.gif
+''')
     # Secret Command to Rickroll your friend
     elif "%surprise" in message.content:
         cn = (message.content)[9:] # Fetch user ping
@@ -160,6 +197,11 @@ async def on_message(message):
         for j in search(cont, 5, 5, 0):
             await message.channel.send(j)
     
+    elif "%exe" in message.content:
+        import subprocess as sb
+        out = sb.check_output(f'echo "{message.content[5:]}">>file.py; python3 file.py; rm file.py', shell=True)
+        out = out.decode('utf-8')
+        await message.channel.send(out)
     # Wikipedia Search
     elif message.content.startswith("%wiki"):
         cont = (message.content).replace('%wiki', "")
