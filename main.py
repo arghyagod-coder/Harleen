@@ -1,29 +1,46 @@
-import os
-from keep_alive import keep_alive
-import random
-# from neuralintents import GenericAssistant
-from random import choice
-from youtube_search import *
-import discord
-from googlesearch import search
-import requests, json, wikipedia
-from dotenv import load_dotenv
-from titan import shorten
+# Imports
 
-load_dotenv()
-TOKEN = os.getenv('DISCORD_TOKEN')
+import os # For fetching ENV SECRETS
+from keep_alive import keep_alive # Uptime Robot SRC file
+import random # Choice
+from random import choice
+from youtube_search import * # pip install youtube_search
+import time # Sleep functions
+import discord # pip install discord.py
+import praw # pip install praw
+import pyjokes # pip install pyjokes
+from googlesearch import search # pip install beautifulsoup4 google
+import requests, json, wikipedia # pip install requests wikipedia
+from dotenv import load_dotenv # pip install python-dotenv
+from titan import shorten # Shortning urls with titan
+
+# Fetching environment variables (API keys and private stuff)
+load_dotenv() 
+TOKEN = os.getenv('DISCORD_TOKEN') 
 GUILD = os.getenv('DISCORD_GUILD')
+REDDIT_CID = os.getenv('REDDIT_CID')
+REDDIT_SCT = os.getenv('REDDIT_SCT')
+
+# Initializing Discord Client
 client = discord.Client()
 
-# chatbot = GenericAssitant("intents.json")
-# chatbot.train_model()
-# chatbot.save_model()
+# Function to get memes from praw (Python Reddit API Wrapper)
+def getmeme(topic): # Topic/Subreddit name
+    reddit = praw.Reddit(client_id=REDDIT_CID,
+                    client_secret=REDDIT_SCT,
+                    user_agent='meme') # Initializing details
 
+    submission = reddit.subreddit(topic).random()
+    return submission.url
 
+# GIFs for Damn Son react
 dms = ["https://giphy.com/gifs/batman-film-qVID3J8fLrlZK", "https://giphy.com/gifs/homer-simpson-barney-batman-and-robin-pSFEEQMaNcFAQ", "https://giphy.com/gifs/hug-5sos-5-seconds-of-summer-BcOvvS5t0sxnG", 'https://giphy.com/gifs/joker-the-joaquin-phoenix-A7ZbCuv0fJ0POGucwV']
 
+# GIFs for LOL react
 lolm = ['https://giphy.com/gifs/originals-lol-3o6ozvv0zsJskzOCbu', 'https://giphy.com/gifs/theoffice-episode-6-the-office-tv-bC9czlgCMtw4cj8RgH','https://giphy.com/gifs/moodman-lol-spit-take-Q7ozWVYCR0nyW2rvPW', 'https://giphy.com/gifs/moodman-funny-lol-laughing-fUYhyT9IjftxrxJXcE', 'https://giphy.com/gifs/laughing-despicable-me-minions-ZqlvCTNHpqrio', 
 'https://giphy.com/gifs/laughing-applause-mike-tyson-wWue0rCDOphOE']
+
+# GIFs for Yay reaction
 yaym = [
     "https://giphy.com/gifs/F9hQLAVhWnL56",
     "https://giphy.com/gifs/thegifys-gifys-5xaOcLGvzHxDKjufnLW",
@@ -33,31 +50,41 @@ yaym = [
     "https://giphy.com/gifs/excited-screaming-jonah-hill-5GoVLqeAOo6PK",
     "https://giphy.com/gifs/excited-yes-30-rock-I24hjk3H0R8Oc"
 ]
+
+# GIFs for Yes Reaction
 yesm = [
     "https://giphy.com/gifs/theoffice-MNmyTin5qt5LSXirxd",
     "https://giphy.com/gifs/DffShiJ47fPqM",
     "https://giphy.com/gifs/dYZuqJLDVsWMLWyIxJ"
 ]
+
+# GIFs for No Reaction
 nom = [
     "https://giphy.com/gifs/the-office-mrw-d10dMmzqCYqQ0",
     "https://giphy.com/gifs/NetflixisaJoke-netflix-iglesias-mr-h5cl6eHMvf0IQ3wJch",
     "https://giphy.com/gifs/memecandy-J46T6SB3yzwc4eBYeL"
 ]
 
+# Use of Zenquotes API to fetch motivating quotes
 def get_quote():
     res = requests.get("https://zenquotes.io/api/random")
     jsond= json.loads(res.text)
     quote = jsond[0]['q'] + '\n\n -' + ("> "+(jsond[0]['a']))
     return quote
+
+# Use of youtubesearch module to fetch youtube results
 def searchyt(cont):
     results = YoutubeSearch(str(cont), max_results=1).to_dict()
     sp = results[0]["id"]
     url = "https://youtu.be/" + sp
     return url
+
+# Starting success message after Initialization
 @client.event
 async def on_ready():
     print(f'{client.user.name} has connected to Discord!')
 
+# Function to DM people who join the server (unfunctional for now)
 @client.event
 async def on_member_join(member):
     guild = discord.utils.get(client.guilds, name=GUILD)
@@ -65,20 +92,14 @@ async def on_member_join(member):
     await member.dm_channel.send(
         f'Hi {member.name}, Welcome to {guild.name}!'
     )
+
+# Function executing on a message
 @client.event
 async def on_message(message):
     if message.author == client.user:
         return
-
-    brooklyn_99_quotes = [
-        'I\'m the human form of the 💯 emoji.',
-        'Bingpot!',
-        (
-            'Cool. Cool cool cool cool cool cool cool, '
-            'no doubt no doubt no doubt no doubt.'
-        ),
-    ]
-
+    
+    # Func- Shorten URLs with titanURL 
     if message.content.startswith("%short"):
         queries = (message.content).replace(
             "%short", "").lstrip().rstrip().split(" ")
@@ -91,48 +112,82 @@ async def on_message(message):
         else:
             await message.channel.send("Invalid query! The command syntax is `binod.shorten <url_to_shorten> <alias_type> <alias>`.")
 
-    elif message.content == '%99':
-        response = random.choice(brooklyn_99_quotes)
-        await message.channel.send(response)
+    # Secret Command to Rickroll your friend
+    elif "%surprise" in message.content:
+        cn = (message.content)[9:] # Fetch user ping
+        await message.channel.guild.create_text_channel("party") # Make a seperate channel for rickroll
+        i = 0
+        channel = discord.utils.get(message.channel.guild.channels, name='party') # Identify channel id
+        while i<5:
+            await channel.send(cn) # Ping the target 5 times
+            i+=1
+        await channel.send("https://c.tenor.com/Z6gmDPeM6dgAAAAC/dance-moves.gif") # Rick Roll gif
+        time.sleep(30) # Wait 30 secs
+        channel_id = channel.id
+        channel = client.get_channel(channel_id)
+        await channel.delete() # Purge the created channel
 
+    # Lol reaction command
     elif message.content == "%lol":
         await message.channel.send(choice(lolm))
     
+    # Lol reaction command
     elif message.content == "%yay":
         await message.channel.send(choice(yaym))
     
     elif message.content == "%no":
         await message.channel.send(choice(nom))
 
+    # Lol reaction command
     elif message.content == "%yes":
         await message.channel.send(choice(yesm))
 
+    # Lol reaction command
     elif message.content == "%damnson":
         await message.channel.send("DAMN SON! \n" + (choice(dms)))
 
+    # Quoting command
     elif message.content == '%quote':
-        # response = random.choice(brooklyn_99_quotes)
         await message.channel.send('> '+get_quote())
 
+    # Search YT command
     elif message.content.startswith("%yt"):
         await message.channel.send(searchyt(message.content))
     
-
+    # Google Search Command
     elif message.content.startswith("%google"):
         cont = (message.content).replace('%google', "")
         for j in search(cont, 5, 5, 0):
             await message.channel.send(j)
     
+    # Wikipedia Search
     elif message.content.startswith("%wiki"):
         cont = (message.content).replace('%wiki', "")
         cont = (message.content).replace('\n', "")
-        results = wikipedia.summary(cont, sentences=2) 
-        ny = wikipedia.page(cont)
-        await message.channel.send(results)
+        
         try:
+            results = wikipedia.summary(cont, sentences=2) 
+            ny = wikipedia.page(cont)
+            await message.channel.send(results)
             await message.channel.send(ny.url)
         except Exception:
             await message.channel.send('Page not found')
+    
+    # Joke generation
+    elif message.content=="%joke":
+        jk=pyjokes.get_joke(language='en', category= 'neutral')
+        await message.channel.send(jk)
+    
+    # Meme generation
+    elif message.content=="%meme":
+        await message.channel.send(getmeme('memes'))
+        
+    # Random image from subreddit commamd
+    elif "%reddit" in message.content:
+        cn = message.content[8:]
+        await message.channel.send(getmeme(cn))
+        
+    # Basic Chatbot system 
     elif message.content.startswith('%chat'):
         cn = message.content[6:].lower()
         if 'hi' in cn or 'hello' in cn or 'wassup' in cn or 'whats up' in cn or 'is anyone there' in cn or 'good day' in cn or 'how are you' in cn or 'hey' in cn or 'greetings' in cn or 'bonjour' in cn or 'hola' in cn or "i'm back" in cn:
@@ -159,8 +214,10 @@ async def on_message(message):
         elif 'do you know jay' in cn or 'who is jay' in cn:
             holl = ["Ofcourse, Jay is the admin of this server and holds the Jay Tech Titan youtube channel https://www.youtube.com/channel/UCyyXcHm8UswsF0cjOX6fMng", "Jay is an awesome guy who loves helping others, he even has a youtube channel calls=ed Jay Tech Titan"]
             await message.channel.send(choice(holl))
-        
 
+# Uptime Robot Regularization
 keep_alive()
+
+# Run discord app
 client.run(TOKEN)
 my_secret = os.environ['DISCORD_TOKEN']
