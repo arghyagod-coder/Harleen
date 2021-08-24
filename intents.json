@@ -1,0 +1,43 @@
+{"intents": [
+  {"tag": "greeting",
+    "patterns": ["Hi", "How are you", "Is anyone there?", "Hello", "Good day", "Whats up", "Hey", "greetings"],
+    "responses": ["Hello!", "Good to see you again!", "Hi there, how can I help?"],
+    "context_set": ""
+  },
+  {"tag": "goodbye",
+    "patterns": ["cya", "See you later", "Goodbye", "I am Leaving", "Have a Good day", "bye", "cao", "see ya"],
+    "responses": ["Sad to see you go :(", "Talk to you later", "Goodbye!"],
+    "context_set": ""
+  },
+  {"tag": "eat",
+    "patterns": ["What do you eat", "Eat something"],
+    "responses": ["I can't eat as I'm a bot ofcourse", "Nothing for now, Your head in future", "Human Flesh, wanna have some?"],
+    "context_set": ""
+  },
+  {"tag": "creator",
+    "patterns": ["Who created you?", "Who is your creator?", "Who made you?"],
+    "responses": ["I was created by @JAY#5059", "I was given birth by a male homosapien @JAY#5059 ... HEAVY SUS", "I was literally made by a person who flexes to be a god"],
+    "context_set": ""
+  },
+  {"tag": "age",
+    "patterns": ["What is your age?", "How old are you?", "When were you born?"],
+    "responses": ["I was created on 24.08.2021 by Jay", "I was born on 24.08.2021", "It's just a matter of few months"],
+    "context_set": ""
+  },
+  {"tag": "currently",
+    "patterns": ["What are you doing currently?", "What are your future plans?", "What is Jay doing"],
+    "responses": ["We are working on the next video which is secret! Dropping in soon tho.", "Jay is preparing for his exams and I'm helping him :)", "I'm pretty sure Jay is working on a new project soon"],
+    "context_set": ""
+  },
+  {"tag": "what",
+    "patterns": ["Why are your here?", "What can you do?", "What are your skills"],
+    "responses": ["I am here to take care of heavy stuff here. People use me for utility, fun and entertainment, and even for expressing their thoughts with my fun filled GIFs"],
+    "context_set": ""
+  },
+  {"tag": "jay",
+    "patterns": ["Do you know Jay?", "Who is Jay?"],
+    "responses": ["Ofcourse, Jay is the admin of this server and holds the Jay Tech Titan youtube channel https://www.youtube.com/channel/UCyyXcHm8UswsF0cjOX6fMng", "Jay is an awesome guy who loves helping others, he even has a youtube channel calls=ed Jay Tech Titan"],
+    "context_set": ""
+  },
+]
+}
