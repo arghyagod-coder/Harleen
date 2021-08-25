@@ -300,6 +300,17 @@ optional = false
 python-versions = ">=3.6"
 
 [[package]]
+name = "tengiphpy"
+version = "2.5.0"
+description = "API Wrapper for the Gif library Tenor and Giphy. Join my server: https://discord.gg/uFdVUMH"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+requests = "*"
+
+[[package]]
 name = "typing-extensions"
 version = "3.10.0.0"
 description = "Backported and Experimental Type Hints for Python 3.5+"
@@ -397,7 +408,7 @@ requests = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "fc1ed9acc31b23d8ff78f31e50c228d35c90ec10453039f68afef304ad3cace7"
+content-hash = "69edd827369328ffd11921af7e408f0c186c7a739cfdd9f8e79553030692143e"
 
 [metadata.files]
 aiohttp = [
@@ -622,6 +633,9 @@ requests = [
 soupsieve = [
     {file = "soupsieve-2.2.1-py3-none-any.whl", hash = "sha256:c2c1c2d44f158cdbddab7824a9af8c4f83c76b1e23e049479aa432feb6c4c23b"},
     {file = "soupsieve-2.2.1.tar.gz", hash = "sha256:052774848f448cf19c7e959adf5566904d525f33a3f8b6ba6f6f8f26ec7de0cc"},
+]
+tengiphpy = [
+    {file = "TenGiphPy-2.5.0-py3-none-any.whl", hash = "sha256:b69401a4dd95de7030fb878a8ca7079351f8b543cced73ed4bd8e1240770c561"},
 ]
 typing-extensions = [
     {file = "typing_extensions-3.10.0.0-py2-none-any.whl", hash = "sha256:0ac0f89795dd19de6b97debb0c6af1c70987fd80a2d62d1958f7e56fcc31b497"},
