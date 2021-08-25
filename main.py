@@ -23,6 +23,7 @@ GUILD = os.getenv('DISCORD_GUILD')
 REDDIT_CID = os.getenv('REDDIT_CID')
 REDDIT_SCT = os.getenv('REDDIT_SCT')
 TKEY = os.getenv("TENOR_KEY")
+CBAPI = os.getenv("CBAPI")
 prefixes={}
 # ---------------------------------------------------------------------------------------
 
@@ -305,13 +306,7 @@ Happy Biting!
     # Basic Chatbot system 
     elif message.content.startswith(f'{prefix}chat'):
         cn = message.content[6:].lower()
-        if 'hi' in cn or 'hello' in cn or 'wassup' in cn or 'whats up' in cn or 'is anyone there' in cn or 'good day' in cn or 'how are you' in cn or 'hey' in cn or 'greetings' in cn or 'bonjour' in cn or 'hola' in cn or "i'm back" in cn:
-            holl = ["Hello!", "Good to see you again!", "Hi there, how can I help?"]
-            await message.channel.send(choice(holl))
-        elif 'cya' in cn or 'goodbye' in cn or 'good bye' in cn or 'gtg' in cn or 'see you later' in cn or 'i am leaving' in cn or 'have a good day' in cn or 'bye' in cn or 'ciao' in cn or 'bye bye' in cn or 'have to go' in cn or "bye..." in cn:
-            holl =["Sad to see you go :(", "Talk to you later", "Goodbye!"]
-            await message.channel.send(choice(holl))
-        elif 'what do you eat' in cn or 'eat something' in cn or 'can you eat' in cn:
+        if 'what do you eat' in cn or 'eat something' in cn or 'can you eat' in cn:
             holl =["I can't eat as I'm a bot ofcourse", "Nothing for now, Your head in future", "Human Flesh, wanna have some?"]
             await message.channel.send(choice(holl))
         elif 'who is your creator' in cn or 'who made you' in cn or 'who created you' in cn:
@@ -342,8 +337,16 @@ Happy Biting!
             for j in search(cont, 1, 1, 0):
                 await message.channel.send(j)
         else:
-            await message.channel.send("I don't get it")
+            cont = (message.content).replace(f"{prefix}chat", "")
+            from prsaw import RandomStuff
+            rs = RandomStuff(async_mode=True, api_key=CBAPI)
+            res = await rs.get_ai_response(cont)
+            await message.channel.send(res[0]["message"])
 
+    elif message.content == f"{prefix}src":
+        em = discord.Embed(title="Source Code", description="My source code is at:\n https://github.com/arghyagod-coder/Harleen", color=discord.Color.cyan())
+        em.set_image("https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwallpaper.dog%2Flarge%2F17044823.jpg&f=1&nofb=1")
+        await message.channel.send(embed = em)
 
 
 

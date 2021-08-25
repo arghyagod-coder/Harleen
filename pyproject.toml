@@ -19,6 +19,7 @@ pyjokes = "^0.6.0"
 praw = "^7.4.0"
 TenGiphPy = "^2.5.0"
 urllib3 = "^1.26.6"
+prsaw = "^0.4.0"
 
 [tool.poetry.dev-dependencies]
 
