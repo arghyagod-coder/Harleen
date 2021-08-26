@@ -1,5 +1,5 @@
 # Imports
-
+from ext import *
 import os # For fetching ENV SECRETS
 from keep_alive import keep_alive # Uptime Robot SRC file
 import re, urllib.parse, urllib.request
@@ -93,8 +93,9 @@ nom = [
 def get_quote():
     res = requests.get("https://zenquotes.io/api/random")
     jsond= json.loads(res.text)
-    quote = jsond[0]['q'] + '\n\n -' + ("> "+(jsond[0]['a']))
-    return quote
+    quote = jsond[0]['q']
+    auth = (jsond[0]['a'])
+    return quote, auth
 
 # ---------------------------------------------------------------------------------------
 
@@ -180,15 +181,16 @@ My powers of multi tasking, well its immatchable
 {prefix}joke - Wanna listen to a panky joke?
 {prefix}short <url> <alias type> <alias> - Get a shortened custom url free of cost
 {prefix}quote - Wanna refresh your brain with some motivating quotes?
-{prefix}chat <question> - You can chat with me with basic questions, cmon don't be so tough
+harley <question> - You can chat with me with basic questions, cmon don't be so tough
 {prefix}getinv - Get an invite link for the current server.
+{prefix}src - Wanna peek in inside me?
 
 **Browsing Section:**
 {prefix}google <argument> - Can't undertsand soemthing? Google it!
 {prefix}wiki <argument> - Oh how much I like to read wikipedia articles
 {prefix}yt <argument> - Search your fav video on Youtube can you?
 {prefix}gif <argument> - Get your desired GIFs!
-{prefix}chat how to do <terms> - Confused on seomthing? Ask it her
+harley how to do <terms> - Confused on seomthing? Ask it her
 
 **Reactions**:
 {prefix}yes 
@@ -252,7 +254,9 @@ Happy Biting!
 
     # Quoting command
     elif message.content == f'{prefix}quote':
-        await message.channel.send('> '+get_quote())
+        q, a = get_quote()
+        em = cembed(title=a+" once said", description=q)
+        await message.channel.send(embed=em)
 
 # ---------------------------------------------------------------------------------------
 
@@ -304,8 +308,8 @@ Happy Biting!
         await message.channel.send(getmeme(cn))
         
     # Basic Chatbot system 
-    elif message.content.startswith(f'{prefix}chat'):
-        cn = message.content[6:].lower()
+    elif (message.content.lower()).startswith(f'harley'):
+        cn = message.content[7:].lower()
         if 'what do you eat' in cn or 'eat something' in cn or 'can you eat' in cn:
             holl =["I can't eat as I'm a bot ofcourse", "Nothing for now, Your head in future", "Human Flesh, wanna have some?"]
             await message.channel.send(choice(holl))
@@ -332,20 +336,20 @@ Happy Biting!
         elif 'btwihavenoname' in cn or 'btwnoname' in cn:
             await message.channel.send("Linus said it was GPL, LINUS said it was gud code")
         elif "how to do" in cn:
-            cont = (message.content).replace(f"{prefix}chat", "")
+            cont = (message.content).replace(f"harley", "")
             await message.channel.send("I found this that may help you:\n\n")
             for j in search(cont, 1, 1, 0):
                 await message.channel.send(j)
         else:
-            cont = (message.content).replace(f"{prefix}chat", "")
+            cont = (message.content).replace(f"harley", "")
             from prsaw import RandomStuff
-            rs = RandomStuff(async_mode=True, api_key=CBAPI)
+            rs = RandomStuff(async_mode=True,api_key=CBAPI)
             res = await rs.get_ai_response(cont)
             await message.channel.send(res[0]["message"])
 
     elif message.content == f"{prefix}src":
-        em = discord.Embed(title="Source Code", description="My source code is at:\n https://github.com/arghyagod-coder/Harleen", color=discord.Color.cyan())
-        em.set_image("https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwallpaper.dog%2Flarge%2F17044823.jpg&f=1&nofb=1")
+        em = discord.Embed(title="Source Code", description="My source code is at:\n https://github.com/arghyagod-coder/Harleen", color=discord.Color.blue())
+        em.set_image(url="https://media4.giphy.com/media/ujBfE6zDRAcYU/giphy.gif?cid=ecf05e47bvt5rlojly56yq9yksf6petiznpw7waboj0olscz&rid=giphy.gif&ct=g")
         await message.channel.send(embed = em)
 
 
@@ -372,6 +376,18 @@ Happy Biting!
         t = TenGiphPy.Tenor(token=TKEY)
         await message.channel.send(t.random(cont))
     
+    elif f"{prefix}ping" in message.content:
+        cont = (message.content).replace(f'{prefix}ping ', "")
+        li = cont.split()
+        n = int(li[-2])
+        p = li[-1]
+        i=0
+        if n>20:
+            message.channel.send("Shut your mischief man\nDon't be such a noob")
+        else:
+            while i<n:
+                await message.channel.send(p)
+                i+=1
     # elif f"{prefix}gimg" in message.content:
 
 # Uptime Robot Regularization
