@@ -1,4 +1,6 @@
 # Imports
+from discord.ext import commands
+import random
 from ext import *
 import os # For fetching ENV SECRETS
 from keep_alive import keep_alive # Uptime Robot SRC file
@@ -9,12 +11,21 @@ import time # Sleep functions
 import discord # pip install discord.py
 import praw # pip install praw
 import pyjokes # pip install pyjokes
-from googlesearch import search # pip install beautifulsoup4 google
+import googlesearch # pip install beautifulsoup4 google
 import requests, json, wikipedia # pip install requests wikipedia
 from dotenv import load_dotenv # pip install python-dotenv
 from titan import shorten # Shortening urls with titan
+import bs4
 
 # ---------------------------------------------------------------------------------------
+
+import music
+cogs = [music] 
+
+bot = commands.Bot(command_prefix="h!", intents = discord.Intents.all())
+
+for i in range(len(cogs)):
+  cogs[i].setup(bot)
 
 # Fetching environment variables (API keys and private stuff)
 load_dotenv()
@@ -26,7 +37,9 @@ TKEY = os.getenv("TENOR_KEY")
 CBAPI = os.getenv("CBAPI")
 prefixes={}
 # ---------------------------------------------------------------------------------------
-
+import TenGiphPy
+t = TenGiphPy.Tenor(token=TKEY)
+# bot = discord.Client()
 # Initializing Discord Client
 client = discord.Client()
 
@@ -69,6 +82,8 @@ yaym = [
     "https://giphy.com/gifs/excited-screaming-jonah-hill-5GoVLqeAOo6PK",
     "https://giphy.com/gifs/excited-yes-30-rock-I24hjk3H0R8Oc"
 ]
+
+
 
 # GIFs for Yes Reaction
 yesm = [
@@ -120,16 +135,16 @@ def searchyt(song):
 #         json.dump(data, fi)
  
 # Starting success message after Initialization
-@client.event
+@bot.event
 async def on_ready():
-    print(f'{client.user.name} has connected to Discord!')
+    print(f'{bot.user.name} has connected to Discord!')
 
 # ---------------------------------------------------------------------------------------
 
 # Function to DM people who join the server (unfunctional for now)
-@client.event
+@bot.event
 async def on_member_join(member):
-    guild = discord.utils.get(client.guilds, name=GUILD)
+    guild = discord.utils.get(bot.guilds, name=GUILD)
     await member.create_dm()
     await member.dm_channel.send(
         f'Hi {member.name}, Welcome to {guild.name}!'
@@ -138,9 +153,10 @@ async def on_member_join(member):
 # ---------------------------------------------------------------------------------------
 
 # Function executing on a message
-@client.event
+@bot.event
 async def on_message(message):
-    if message.author == client.user:
+    cm = message.content
+    if message.author == bot.user:
         return
 
 # ---------------------------------------------------------------------------------------
@@ -270,11 +286,11 @@ Happy Biting!
     # Google Search Command
     elif message.content.startswith(f"{prefix}google"):
         cont = (message.content).replace(f'{prefix}google', "")
-        for j in search(cont, 5, 5, 0):
+        for j in googlesearch.search(cont, 5, 5, 0):
             await message.channel.send(j)
     elif message.content.startswith(f"{prefix}googol"):
         cont = (message.content).replace(f'{prefix}googol', "")
-        for j in search(cont, 1, 1, 0):
+        for j in googlesearch.search(cont, 1, 1, 0):
             await message.channel.send(j)
 
 # ---------------------------------------------------------------------------------------
@@ -331,22 +347,22 @@ Happy Biting!
         elif 'do firmware update' in cn or 'firmware update' in cn:
             await message.channel.send("I cannot update firmware cuz I don't like lazy people")
             await message.channel.send("Do it yourself.")
-            for j in search("how to update firmware", 1, 1, 0):
+            for j in googlesearch.search("how to update firmware", 1, 1, 0):
                 await message.channel.send(j)
         elif 'btwihavenoname' in cn or 'btwnoname' in cn:
             await message.channel.send("Linus said it was GPL, LINUS said it was gud code")
         elif "how to do" in cn:
             cont = (message.content).replace(f"harley", "")
             await message.channel.send("I found this that may help you:\n\n")
-            for j in search(cont, 1, 1, 0):
+            for j in googlesearch.search(cont, 1, 1, 0):
                 await message.channel.send(j)
         else:
             cont = (message.content).replace(f"harley", "")
             from prsaw import RandomStuff
             rs = RandomStuff(async_mode=True,api_key=CBAPI)
-            res = await rs.get_ai_response(cont)
+            res = await rs.get_ai_response(cont);await rs.close()
             await message.channel.send(res[0]["message"])
-
+    
     elif message.content == f"{prefix}src":
         em = discord.Embed(title="Source Code", description="My source code is at:\n https://github.com/arghyagod-coder/Harleen", color=discord.Color.blue())
         em.set_image(url="https://media4.giphy.com/media/ujBfE6zDRAcYU/giphy.gif?cid=ecf05e47bvt5rlojly56yq9yksf6petiznpw7waboj0olscz&rid=giphy.gif&ct=g")
@@ -388,11 +404,106 @@ Happy Biting!
             while i<n:
                 await message.channel.send(p)
                 i+=1
-    # elif f"{prefix}gimg" in message.content:
+			
+    elif f"{prefix}waifu" in message.content:
+        from waifu import WaifuClient
+        wc= WaifuClient()
+        sfw_waifu: str = wc.sfw(category='waifu')
+        em = cembed(title="Oh Ho Boi", description="Cute?", picture=sfw_waifu)
+        await message.channel.send(embed=em)
+    
+    elif f"{prefix}weather" in message.content:
+        cn=message.content[9:]
+        import randomstuff
+        rs = randomstuff.AsyncClient(api_key=CBAPI)
+        res = await rs.get_weather(cn.lower())
+        em = discord.Embed(title=f"Weather at {res.location.name} is:", description=f"{res.current.temperature}°C", color=discord.Color.blue())
+        rs.close()
+        await message.channel.send(embed=em)
+    elif f"{prefix}slap" in cm:
+        cl = cm.split()
+        ct = cl[1]
+        em = discord.Embed(description=f"{message.author.name} gives a tight smack to {ct}!", color=discord.Color.blue())
+        import TenGiphPy
+        t = TenGiphPy.Tenor(token=TKEY)
+        em.set_image(url=(t.random("batman slap")))
+        await message.channel.send(embed = em)
+    elif f"{prefix}kick" in cm:
+        cl = cm.split()
+        ct = cl[1]
+        em = discord.Embed(description=f"{message.author.name} throws out {ct}, K.O.!", color=discord.Color.blue())
+        import TenGiphPy
+        t = TenGiphPy.Tenor(token=TKEY)
+        em.set_image(url=(t.random("batman kick")))
+        await message.channel.send(embed = em)
+    elif f"{prefix}punch" in cm:
+        cl = cm.split()
+        ct = cl[1]
+        em = discord.Embed(description=f"{ct} is done this time by... {message.author.name}!", color=discord.Color.blue())
+        import TenGiphPy
+        t = TenGiphPy.Tenor(token=TKEY)
+        em.set_image(url=(t.random("batman punch")))
+        await message.channel.send(embed = em)
+    elif f"{prefix}kill" in cm:
+        cl = cm.split()
+        ct = cl[1]
+        em = discord.Embed(description=f"{message.author.name} seems to have made someone disappear... \n Is it {ct}?", color=discord.Color.blue())
+        import TenGiphPy
+        t = TenGiphPy.Tenor(token=TKEY)
+        em.set_image(url=(t.random("batman killing")))
+        await message.channel.send(embed = em)
+    elif f"{prefix}gayrate" in cm:
+        cl = cm.split()
+        pr= random.randint(1, 100)
+        ct = cl[1]
+        em = discord.Embed(description=f"{ct} is {pr}% gay\n:rainbow_flag: :thinking:", color=discord.Color.red())
+        await message.channel.send(embed=em)
+
+    elif f"{prefix}aw" in message.content:
+        try:
+            cont = (message.content).replace(f'{prefix}aw ', "")
+            print(cont)
+            page = requests.get(f'https://wiki.archlinux.org/title/{cont}')
+            soup = bs4.BeautifulSoup(page.content, "html.parser")
+            title = soup.find_all('title', limit=1)
+            para = soup.find_all('dd', limit=1)
+            embed=discord.Embed(title=title[0].string, url=f"https://wiki.archlinux.org/title/{cont}", description=para[0].get_text(), color=discord.Color.blue())
+            embed.set_author(name="ArchLinux Wiki", url="https://wiki.archlinux.org/", icon_url="https://wiki.installgentoo.com/images/f/f9/Arch-linux-logo.png")
+            embed.set_thumbnail(url="https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Arch_Linux_logo.svg/800px-Arch_Linux_logo.svg.png")
+            await message.channel.send(embed=embed)
+        except Exception:
+            page = requests.get(f'https://wiki.archlinux.org/index.php?search={cont}&title=Special%3ASearch&go=Go')
+            soup = bs4.BeautifulSoup(page.content, "html.parser")
+            titles = soup.find_all( class_ = "mw-search-result", limit=9)
+            suggestions = []
+            for title in titles:
+                suggestions.append(title.get_text().split(' ')[0])
+
+            embed=discord.Embed(title="404 Not Found", url=f"https://wiki.archlinux.org/title/{cont}", description=f"The keyword entered by you were not found\n\n**Suggestions:**\n\n{','.join(suggestions)}", color=discord.Color.red())
+            embed.set_author(name="ArchLinux Wiki", url="https://wiki.archlinux.org/", icon_url="https://wiki.installgentoo.com/images/f/f9/Arch-linux-logo.png")
+            embed.set_thumbnail(url="https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Arch_Linux_logo.svg/800px-Arch_Linux_logo.svg.png")
+            await message.channel.send(embed=embed)
+
+    elif f"{prefix}warn" in message.content:
+        cont = (message.content).replace(f'{prefix}warn ', "")
+        tl = cont.split(',')
+        em = discord.Embed(title="Warn Notice!", description=f"{tl[0]} was accused of {tl[1]}. If you agree with {message.author.name}, mention your decision through vote", color=discord.Color.red())
+        msg = await message.channel.send(embed=em);up = "🔺";down = "🔻";
+        await msg.add_reaction("🔺")
+        await msg.add_reaction("🔻")
+        valid_reactions = ["🔺", "🔻"]
+        def check(reaction, user):
+            return user == message.author and str(reaction.emoji) in valid_reactions
+        reaction, user = await client.wait_for('reaction_add', timeout=60.0, check=check)
+        if reaction==up:
+            await message.channel.send("Up pressed")
+        elif reaction==down:
+            await message.channel.send("Up pressed")
 
 # Uptime Robot Regularization
-keep_alive()
+
 
 # Run discord app
-client.run(TOKEN)
-my_secret = os.environ['DISCORD_TOKEN']
+bot.run(str(TOKEN))
+# client.run(TOKEN)
+keep_alive()
